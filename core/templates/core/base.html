@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Basel Site{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://unpkg.com/modern-css-reset/dist/reset.min.css" rel="stylesheet">
+  <style>
+    body { font-family: system-ui, sans-serif; line-height: 1.5; margin: 0; }
+    header, footer { background: #0b7285; color: white; padding: 1rem; }
+    nav a { color: white; margin-right: 1rem; text-decoration: none; }
+    .container { max-width: 960px; margin: 0 auto; padding: 1rem; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: .75rem; padding: 1rem; margin: 1rem 0; }
+    .btn { background: #0b7285; color: #fff; padding: .5rem .75rem; border-radius: .5rem; text-decoration: none; }
+    .btn-outline { background: transparent; border: 1px solid #0b7285; color: #0b7285; }
+    .muted { color: #6b7280; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'university' %}">University of Basel</a>
+        <a href="{% url 'news_list' %}">Latest News</a>
+        {% if user.is_authenticated %}
+          <span class="muted">Hi {{ user.username }}</span>
+          <a class="btn btn-outline" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a class="btn btn-outline" href="{% url 'login' %}">Login</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer><div class="container">&copy; {{ now|date:"Y" }} Basel Site</div></footer>
+</body>
+</html>

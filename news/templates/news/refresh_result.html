@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block title %}News Refreshed{% endblock %}
+{% block content %}
+  <div class="card">
+    <h1>News refreshed</h1>
+    <p>Created: {{ created }} &middot; Updated: {{ updated }}</p>
+    <p><a class="btn" href="{% url 'news_list' %}">Back to Latest News</a></p>
+  </div>
+{% endblock %}

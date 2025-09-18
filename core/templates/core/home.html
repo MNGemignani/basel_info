@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block title %}Basel – History{% endblock %}
+{% block content %}
+  <div class="card">
+    <h1>History of Basel</h1>
+    <p>{{ basel_history }}</p>
+    <p class="muted">Tip: Check the <a href="{% url 'news_list' %}">Latest News</a> to see current updates from BZ Basel.</p>
+  </div>
+{% endblock %}
