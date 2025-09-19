@@ -1,9 +1,175 @@
 {% extends "core/base.html" %}
-{% block title %}Basel – History{% endblock %}
+{% block title %}Basel – Home{% endblock %}
+{% load static %}
+
 {% block content %}
-  <div class="card">
-    <h1>History of Basel</h1>
-    <p>{{ basel_history }}</p>
-    <p class="muted">Tip: Check the <a href="{% url 'news_list' %}">Latest News</a> to see current updates from BZ Basel.</p>
+<div class="card">
+  <h1>Basel Info</h1>
+  <p>Check a bit from the history of the city: <a href="{% url 'history' %}">here</a></p>
+  <p>Check some of the University of Basel history: <a href="{% url 'university' %}">here</a></p>
+  <p>Check the latest news: <a href="{% url 'news_list' %}">here</a></p>
+</div>
+
+<!-- Carousel -->
+<div class="card" role="region" aria-label="Basel photo carousel">
+  <h2 style="margin-top:0">My Own Photo Highlights From Basel</h2>
+
+  <div class="carousel" data-autoplay="true" data-interval="5000">
+    <div class="carousel-track">
+      {% for path in carousel_images %}
+      <div class="carousel-slide" aria-roledescription="slide"
+        aria-label="Slide {{ forloop.counter }} of {{ carousel_images|length }}">
+        <img src="{% static path %}" alt="Basel view {{ forloop.counter }}" loading="lazy">
+      </div>
+      {% endfor %}
+    </div>
+
+    <button class="carousel-btn prev" aria-label="Previous slide" type="button">&#10094;</button>
+    <button class="carousel-btn next" aria-label="Next slide" type="button">&#10095;</button>
+
+    <div class="carousel-dots" role="tablist" aria-label="Choose slide">
+      {% for path in carousel_images %}
+      <button class="dot{% if forloop.first %} active{% endif %}" role="tab"
+        aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" data-slide="{{ forloop.counter0 }}"
+        aria-label="Go to slide {{ forloop.counter }}"></button>
+      {% endfor %}
+    </div>
   </div>
+</div>
+
+<style>
+  .carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: .75rem;
+  }
+
+  .carousel-track {
+    display: flex;
+    transition: transform 450ms ease;
+    will-change: transform;
+  }
+
+  .carousel-slide {
+    min-width: 100%;
+    user-select: none;
+  }
+
+  .carousel-slide img {
+    width: 100%;
+    height: clamp(220px, 45vw, 480px);
+    object-fit: cover;
+    display: block;
+    border-radius: .5rem;
+  }
+
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, .45);
+    color: #fff;
+    border: 0;
+    padding: .5rem .7rem;
+    border-radius: .5rem;
+    cursor: pointer;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .carousel-btn:hover {
+    background: rgba(0, 0, 0, .6);
+  }
+
+  .carousel-btn.prev {
+    left: .5rem;
+  }
+
+  .carousel-btn.next {
+    right: .5rem;
+  }
+
+  .carousel-dots {
+    display: flex;
+    gap: .4rem;
+    justify-content: center;
+    margin-top: .6rem;
+  }
+
+  .carousel-dots .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 0;
+    cursor: pointer;
+    background: #cbd5e1;
+  }
+
+  .carousel-dots .dot.active {
+    background: #0b7285;
+  }
+
+  .carousel:hover .carousel-btn {
+    background: rgba(0, 0, 0, .55);
+  }
+</style>
+
+<script>
+  (function () {
+    function initCarousel(root) {
+      const track = root.querySelector('.carousel-track');
+      if (!track) return;
+
+      const slides = Array.from(root.querySelectorAll('.carousel-slide'));
+      const prevBtn = root.querySelector('.carousel-btn.prev');
+      const nextBtn = root.querySelector('.carousel-btn.next');
+      const dots = Array.from(root.querySelectorAll('.dot'));
+
+      let index = 0;
+
+      function render() {
+        track.style.transform = `translateX(-${index * 100}%)`;
+        dots.forEach((d, i) => {
+          const active = i === index;
+          d.classList.toggle('active', active);
+          d.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+      }
+
+      function goTo(i) {
+        index = (i + slides.length) % slides.length;
+        render();
+      }
+
+      prevBtn && prevBtn.addEventListener('click', () => goTo(index - 1));
+      nextBtn && nextBtn.addEventListener('click', () => goTo(index + 1));
+      dots.forEach((d) => d.addEventListener('click', () => goTo(parseInt(d.dataset.slide, 10))));
+
+      // Autoplay (optional via data attributes)
+      let timer = null;
+      const autoplay = root.dataset.autoplay === 'true';
+      const interval = parseInt(root.dataset.interval || '5000', 10);
+
+      function start() {
+        if (!autoplay) return;
+        stop();
+        timer = setInterval(() => goTo(index + 1), interval);
+      }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+      root.addEventListener('mouseenter', stop);
+      root.addEventListener('mouseleave', start);
+      root.addEventListener('focusin', stop);
+      root.addEventListener('focusout', start);
+
+      render();
+      start();
+      window.addEventListener('resize', render);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.carousel').forEach(initCarousel);
+    });
+  })();
+</script>
 {% endblock %}

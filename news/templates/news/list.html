@@ -4,8 +4,9 @@
   <div class="card">
     <h1>Latest News (BZ Basel)</h1>
     <p class="muted">Feed: https://www.bzbasel.ch/basel.rss</p>
+    <br>
     {% if user.is_authenticated %}
-      <p><a class="btn" href="{% url 'news_refresh' %}">Refresh Now (login required)</a></p>
+      <p><a class="btn" href="{% url 'news_refresh' %}">Refresh Now</a></p>
     {% endif %}
   </div>
 
